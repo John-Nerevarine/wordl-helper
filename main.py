@@ -20,8 +20,11 @@ class WordConstructor:
         if not self.letters:
             self.ui_get_letters()
 
-        print('There are words without repeats:')
+        print('\nThere are words without repeats:')
         self.generate_wo_repeats()
+
+        print('\nThere are words with repeats:')
+        self.generate_with_repeats()
 
     def ui_get_length(self):
         while True:
@@ -120,7 +123,46 @@ class WordConstructor:
                     self.recursion_generation_wo_repeats(new_word, pos + 1)
             return
 
+    def generate_with_repeats(self):
+        positions = {}
+        for let in self.letters:
+            for pos in let.positions:
+                if positions.get(pos):
+                    positions[pos].append(let.char)
+                else:
+                    positions[pos] = [let.char]
+
+        self.positions = positions
+        self.recursion_generation_with_repeats(word=[], pos=1, spaces=self.spaces)
+
+    def recursion_generation_with_repeats(self, word, pos, spaces):
+        if pos > self.length:
+            if not word.count('_') == self.spaces:
+                string_word = ''
+                for letter in word:
+                    string_word = ''.join((string_word, letter))
+                print(string_word)
+            return
+
+        else:
+            for char in self.positions[pos]:
+                if char == '_':
+                    if spaces > 0:
+                        new_word = word.copy()
+                        new_word.append(char)
+                        self.recursion_generation_with_repeats(new_word, pos + 1, spaces-1)
+                elif char not in word:
+                    new_word = word.copy()
+                    new_word.append(char)
+                    self.recursion_generation_with_repeats(new_word, pos + 1, spaces)
+                elif spaces > 0:
+                    new_word = word.copy()
+                    new_word.append(char)
+                    self.recursion_generation_with_repeats(new_word, pos + 1, spaces-1)
+
+            return
+
 
 if __name__ == '__main__':
-    print('{:#^65}'.format('  Word Constructor  '))
+    print('{:#^65}'.format('  Wordly Helper  '))
     WordConstructor()
