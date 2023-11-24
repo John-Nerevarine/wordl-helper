@@ -8,10 +8,11 @@ class Letter:
 
 
 class WordConstructor:
-    def __init__(self, length=None, letters=None):
+    def __init__(self, length=None, letters=None, spaces=0):
         self.length = length
         self.letters = letters
         self.positions = None
+        self.spaces = spaces
 
         if not self.length:
             self.ui_get_length()
@@ -19,7 +20,8 @@ class WordConstructor:
         if not self.letters:
             self.ui_get_letters()
 
-        self.generate()
+        print('There are words without repeats:')
+        self.generate_wo_repeats()
 
     def ui_get_length(self):
         while True:
@@ -40,7 +42,7 @@ class WordConstructor:
         print('\nLet\'s check your letters.  Type "0" if it\'s no more known letters.')
         for i in range(self.length):
             while True:
-                letter = input(f'Input letter {i+1}: ').upper()
+                letter = input(f'Input letter {i + 1}: ').upper()
                 if letter == '0':
                     break
                 try:
@@ -57,19 +59,21 @@ class WordConstructor:
                 break
             self.letters.append(Letter(letter))
 
-            print(f'\nLet\'s check possible positions of {self.letters[i].char}.  Type "0" if it\'s no more known positions.')
+            print(
+                f'\nLet\'s check possible positions of {self.letters[i].char}.  Type "0" if it\'s no more known positions.')
             for j in range(self.length):
                 while True:
-                    print()
                     if self.letters[i].positions:
                         print(f'Possible positions for {self.letters[i].char}: {str(self.letters[i].positions)[1:-1]}.')
-                    pos = input(f'Input{" next " if self.letters[i].positions else " "}possible position for {self.letters[i].char}: ')
+                    pos = input(
+                        f'Input{" next " if self.letters[i].positions else " "}possible position for {self.letters[i].char}: ')
                     if pos == '0':
                         break
                     try:
                         pos = int(pos)
                         if not 0 < pos <= self.length:
                             raise ValueError
+                        print()
                         break
                     except ValueError:
                         print('Input number bigger than 0 and not bigger than length of word!\n')
@@ -81,11 +85,10 @@ class WordConstructor:
                 self.letters[i].add_position(pos)
 
         if len(self.letters) < self.length:
-            delta = self.length - len(self.letters)
-            for i in range(delta):
-                self.letters.append(Letter(char='_', positions=[1, 2, 3, 4, 5]))
+            self.spaces = self.length - len(self.letters)
+            self.letters.append(Letter(char='_', positions=[1, 2, 3, 4, 5]))
 
-    def generate(self):
+    def generate_wo_repeats(self):
         positions = {}
         for let in self.letters:
             for pos in let.positions:
@@ -93,21 +96,28 @@ class WordConstructor:
                     positions[pos].append(let.char)
                 else:
                     positions[pos] = [let.char]
-        print(positions)
-        self.positions = positions
-        self.recursion_generation(word=[], pos=1)
 
-    def recursion_generation(self, word, pos):
+        self.positions = positions
+        self.recursion_generation_wo_repeats(word=[], pos=1)
+
+    def recursion_generation_wo_repeats(self, word, pos):
         if pos > self.length:
-            print(word)
+            string_word = ''
+            for letter in word:
+                string_word = ''.join((string_word, letter))
+            print(string_word)
             return
 
         else:
             for char in self.positions[pos]:
-                if char not in word:
+                if char == '_' and word.count(char) < self.spaces:
                     new_word = word.copy()
                     new_word.append(char)
-                    self.recursion_generation(new_word, pos+1)
+                    self.recursion_generation_wo_repeats(new_word, pos + 1)
+                elif char not in word:
+                    new_word = word.copy()
+                    new_word.append(char)
+                    self.recursion_generation_wo_repeats(new_word, pos + 1)
             return
 
 
