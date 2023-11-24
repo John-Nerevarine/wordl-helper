@@ -42,7 +42,7 @@ class WordConstructor:
     def ui_get_letters(self):
         self.letters = []
 
-        print('\nLet\'s check your letters.  Type "0" if it\'s no more known letters.')
+        print('\nLet\'s check your letters.  Type "0" if there is no more known letters.')
         for i in range(self.length):
             while True:
                 letter = input(f'Input letter {i + 1}: ').upper()
@@ -63,7 +63,7 @@ class WordConstructor:
             self.letters.append(Letter(letter))
 
             print(
-                f'\nLet\'s check possible positions of {self.letters[i].char}.  Type "0" if it\'s no more known positions.')
+                f'\nLet\'s check possible positions of {self.letters[i].char}.  Type "0" if there is no more known positions.')
             for j in range(self.length):
                 while True:
                     if self.letters[i].positions:
@@ -164,5 +164,6 @@ class WordConstructor:
 
 
 if __name__ == '__main__':
-    print('{:#^65}'.format('  Wordly Helper  '))
+    print('{:#^65}'.format('  Wordl Helper'
+                           '  '))
     WordConstructor()
